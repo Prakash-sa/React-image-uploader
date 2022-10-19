@@ -6,6 +6,7 @@ import { ResultImageCard } from './components/ResultImageCard';
 
 
 // best article https://blog.logrocket.com/create-drag-and-drop-component-react-dropzone/
+// https://www.upbeatcode.com/react/where-to-store-images-in-react-app/
 const imageTypeRegex = /image\/(png|jpg|jpeg)/gm;
 
 function App() {
