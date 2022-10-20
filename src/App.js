@@ -15,11 +15,22 @@ function App() {
 
   const uploadFiles = () => {
     const formData = new FormData();
-    // console.log(imageSent);
-    // formData.append('image', imageSent);
+    console.log(imageFiles);
+    formData.append('image', imageFiles);
+
+    const config={
+      headers:{
+        'content-type':'multipart/form-data',
+      },
+    };
+
     formData.append('key', 'Your Api key goes here');
-    axios.post('https://api.imgbb.com/1/upload', formData).then((response) => {
+    axios.post('https://api.imgbb.com/1/upload', formData,config)
+    .then((response) => {
       console.log(response);
+      alert("Image Uploaded Successfully!!");
+    }).catch((err)=>{
+      console.log('err',err);
     });
   };
 
@@ -73,7 +84,7 @@ function App() {
 
   return (
     <div className="App">
-      <form>
+      <form onSubmit={uploadFiles()}>
         <div class="mx-12 my-12">
               <label class="block text-sm font-medium text-gray-700">Cover photo</label>
               <div class="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
@@ -92,19 +103,9 @@ function App() {
                 </div>
               </div>
             <div class="bg-gray-50 px-4 py-3 text-right sm:px-6">
-              <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save</button>
+              <button type="submit" class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Submit</button>
             </div>
           </div>
-        <p>
-          <label htmlFor="file">Upload images</label>
-          <input
-            type="file"
-            id="file"
-            onChange={changeHandler}
-            accept="image/png, image/jpg, image/jpeg"
-            multiple
-          />
-        </p>
       </form>
       {
         images.length > 0 ?
