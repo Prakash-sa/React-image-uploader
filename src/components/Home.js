@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { ResultImageCard } from './ResultImageCard';
 import { ResultImageCards } from './ResultImageCards';
+import { Progress } from "@material-tailwind/react";
 
 const imageTypeRegex = /image\/(png|jpg|jpeg)/gm;
 
@@ -10,6 +11,13 @@ const Home = () => {
 
     const [imageFiles, setImageFiles] = useState([]);
     const [images, setImages] = useState([]);
+    const [progress,setProgress]=useState(0);
+
+    const ProgressBar = () => {
+        return (
+            <Progress value={progress} label="Completed" />
+        );
+    };
   
     const onFormSubmit = (e) => {
       e.preventDefault();
@@ -22,6 +30,10 @@ const Home = () => {
         headers:{
           'content-type':'multipart/form-data',
         },
+        onUploadProgress: progressEvent => {
+            progress = (progressEvent.loaded / progressEvent.total) * 100;
+            setProgress(progress);
+          }
       };
   
       formData.append('key', 'Your Api key goes here');
@@ -106,6 +118,9 @@ const Home = () => {
             </div>
           </div>
       </form>
+      {
+        progress>0?<ProgressBar/>:null
+      }
       {
         images.length > 0 ?
           <div>
