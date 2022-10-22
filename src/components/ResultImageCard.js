@@ -3,15 +3,7 @@ import { useEffect, useState } from 'react';
 
 export const ResultImageCard=({image})=>{
     const [imageSrc,setImageSrc]=useState([]);
-
-    // const imageR=()=>{
-    //     const fileReader = new FileReader();
-    //     fileReader.onload = (e) => {
-    //         const { result } = e.target;
-    //         if(result)setImageSrc(result);
-    //     }
-    //     fileReader.readAsDataURL(image);
-    // }
+    const [fileSize,setFileSize]=useState(0);
 
     useEffect(()=>{
         const fileReader = new FileReader();
@@ -21,10 +13,12 @@ export const ResultImageCard=({image})=>{
         }
         if(image)
         fileReader.readAsDataURL(image);
+        setFileSize(fileSizeCal());
     },[]);
 
 
-    const fileSize = (size) => {
+    const fileSizeCal = () => {
+        const size=image.size
         if (size === 0) return '0 Bytes';
         const k = 1024;
         const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -52,8 +46,8 @@ export const ResultImageCard=({image})=>{
                 </p>
             </div>
             <div class="px-6 pt-4 pb-2">
-                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#photography</span>
-                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#travel</span>
+                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{fileSize}</span>
+                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{image.type}</span>
                 <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">#winter</span>
             </div>
         </div>
