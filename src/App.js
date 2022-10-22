@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import Home from './components/Home';
 import About from './components/About'
+import Dropzone_test from './components/Dropzone_test'
 
 
 // best article https://blog.logrocket.com/create-drag-and-drop-component-react-dropzone/
@@ -27,6 +28,7 @@ function App() {
         <Navbar/ >
         <Routes>
           <Route path="/about" element={<About/>} />
+          <Route path="/dropzone" element={<Dropzone_test/>}/>
           <Route path="/" element={<Home/>} />
         </Routes>
 

@@ -1,10 +1,43 @@
-export const ResultImageCard=({name,image})=>{
+
+import { useEffect, useState } from 'react';
+
+export const ResultImageCard=({image})=>{
+    const [imageSrc,setImageSrc]=useState([]);
+
+    // const imageR=()=>{
+    //     const fileReader = new FileReader();
+    //     fileReader.onload = (e) => {
+    //         const { result } = e.target;
+    //         if(result)setImageSrc(result);
+    //     }
+    //     fileReader.readAsDataURL(image);
+    // }
+
+    useEffect(()=>{
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+            const { result } = e.target;
+            if(result)setImageSrc(result);
+        }
+        if(image)
+        fileReader.readAsDataURL(image);
+    },[]);
+
+
+    const fileSize = (size) => {
+        if (size === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(size) / Math.log(k));
+        return parseFloat((size / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
     return (
     <div class="bg-white">
         <div class="max-w-sm rounded overflow-hidden shadow-lg">
             <div class="flex flex-row">
                 <p class="text-gray-700 grow text-base text-center">
-                    {name}
+                    {image.name}
                 </p>
                 <button type="button" class="bg-white flex-none rounded-md p-2 justify-end text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                     <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -12,7 +45,7 @@ export const ResultImageCard=({name,image})=>{
                     </svg>
                 </button>
             </div>
-            <img class="w-full" src={image} alt="Sunset in the mountains"/>
+            <img class="w-full" src={imageSrc} alt="Sunset in the mountains"/>
             <div class="px-6 py-4">
                 <p class="text-gray-700 text-base">
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.

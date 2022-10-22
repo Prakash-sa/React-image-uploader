@@ -1,9 +1,11 @@
-import React from 'react'
+import React,{useCallback} from 'react'
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { ResultImageCard } from './ResultImageCard';
 import { ResultImageCards } from './ResultImageCards';
 import { Progress } from "@material-tailwind/react";
+import {useDropzone} from 'react-dropzone'
+
 
 const imageTypeRegex = /image\/(png|jpg|jpeg)/gm;
 
@@ -12,6 +14,32 @@ const Home = () => {
     const [imageFiles, setImageFiles] = useState([]);
     const [images, setImages] = useState([]);
     const [progress,setProgress]=useState(0);
+
+    const fileSize = (size) => {
+        if (size === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(size) / Math.log(k));
+        return parseFloat((size / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+
+
+    const onDrop = useCallback(acceptedFiles => {
+        const validImageFiles = [];
+        acceptedFiles.forEach((file)=>{
+            console.log(file);
+            if (file.type.match(imageTypeRegex)) {
+                validImageFiles.push(file);
+            }
+        })
+        if (validImageFiles.length) {
+            setImageFiles(validImageFiles);
+            return;
+        }
+        alert("Selected images are not of valid type!");
+    }, [])
+
+    const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
 
     const ProgressBar = () => {
         return (
@@ -56,6 +84,7 @@ const Home = () => {
         }
       }
       if (validImageFiles.length) {
+        console.log("set image files")
         setImageFiles(validImageFiles);
         return;
       }
@@ -64,34 +93,34 @@ const Home = () => {
   
     
   
-    useEffect(() => {
-      const images = [], fileReaders = [];
-      let isCancel = false;
-      if (imageFiles.length) {
-        imageFiles.forEach((file) => {
-          const fileReader = new FileReader();
-          fileReaders.push(fileReader);
-          fileReader.onload = (e) => {
-            const { result } = e.target;
-            if (result) {
-              images.push(result)
-            }
-            if (images.length === imageFiles.length && !isCancel) {
-              setImages(images);
-            }
-          }
-          fileReader.readAsDataURL(file);
-        })
-      };
-      return () => {
-        isCancel = true;
-        fileReaders.forEach(fileReader => {
-          if (fileReader.readyState === 1) {
-            fileReader.abort()
-          }
-        })
-      }
-    }, [imageFiles]);
+    // useEffect(() => {
+    //   const images = [], fileReaders = [];
+    //   let isCancel = false;
+    //   if (imageFiles.length) {
+    //     imageFiles.forEach((file) => {
+    //       const fileReader = new FileReader();
+    //       fileReaders.push(fileReader);
+    //       fileReader.onload = (e) => {
+    //         const { result } = e.target;
+    //         if (result) {
+    //           images.push(result)
+    //         }
+    //         if (images.length === imageFiles.length && !isCancel) {
+    //           setImages(images);
+    //         }
+    //       }
+    //       fileReader.readAsDataURL(file);
+    //     })
+    //   };
+    //   return () => {
+    //     isCancel = true;
+    //     fileReaders.forEach(fileReader => {
+    //       if (fileReader.readyState === 1) {
+    //         fileReader.abort()
+    //       }
+    //     })
+    //   }
+    // }, [imageFiles]);
   
   return (
     <div>
@@ -103,12 +132,17 @@ const Home = () => {
                   <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
-                  <div class="flex text-sm text-gray-600">
+                  <div class="flex text-sm text-gray-600" {...getRootProps()}>
                     <label for="file-upload" class="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500">
                       <span>Upload a file</span>
-                      <input id="file-upload" name="file-upload" type="file" class="sr-only" onChange={changeHandler} accept="image/png, image/jpg, image/jpeg" multiple/>
+
                     </label>
-                    <p class="pl-1">or drag and drop</p>
+                        <input id="file-upload" name="file-upload" type="file" class="sr-only" onChange={changeHandler} accept="image/png, image/jpg, image/jpeg" multiple {...getInputProps()} />
+                        {
+                            isDragActive ?
+                            <p>or Drop the files here ...</p> :
+                            <p class="pl-1">or Drag 'n' drop some files here</p>
+                        }
                   </div>
                   <p class="text-xs text-gray-500">PNG, JPG, JPEG</p>
                 </div>
@@ -122,10 +156,10 @@ const Home = () => {
         progress>0?<ProgressBar/>:null
       }
       {
-        images.length > 0 ?
+        imageFiles.length > 0 ?
           <div>
             {
-              <ResultImageCards value={images} />
+              <ResultImageCards imageProperties={imageFiles} />
             }
           </div> : null
       }
