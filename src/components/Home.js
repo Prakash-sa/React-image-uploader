@@ -5,6 +5,7 @@ import { ResultImageCard } from './ResultImageCard';
 import { ResultImageCards } from './ResultImageCards';
 import { Progress } from "@material-tailwind/react";
 import {useDropzone} from 'react-dropzone'
+import { useStateValue } from "./StateProvider";
 
 
 const imageTypeRegex = /image\/(png|jpg|jpeg)/gm;
@@ -12,16 +13,17 @@ const imageTypeRegex = /image\/(png|jpg|jpeg)/gm;
 const Home = () => {
 
     const [imageFiles, setImageFiles] = useState([]);
-    const [images, setImages] = useState([]);
     const [progress,setProgress]=useState(0);
+    const [{ images }, dispatch] = useStateValue();
 
-    const fileSize = (size) => {
-        if (size === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-        const i = Math.floor(Math.log(size) / Math.log(k));
-        return parseFloat((size / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-    }
+  const addImages = (image1) => {
+    dispatch({
+      type: "ADD_IMAGE",
+      item: {
+        images: image1
+      },
+    });
+  };
 
 
     const onDrop = useCallback(acceptedFiles => {
@@ -33,7 +35,10 @@ const Home = () => {
             }
         })
         if (validImageFiles.length) {
+            console.log("adding to files")
             setImageFiles(validImageFiles);
+            console.log("imageFiles",validImageFiles);
+            addImages(validImageFiles)
             return;
         }
         alert("Selected images are not of valid type!");
@@ -86,10 +91,15 @@ const Home = () => {
       if (validImageFiles.length) {
         console.log("set image files")
         setImageFiles(validImageFiles);
+        addImages()
         return;
       }
       alert("Selected images are not of valid type!");
     };
+
+    // useEffect(()=>{
+    //     addImages()
+    // },[imageFiles])
   
     
   
